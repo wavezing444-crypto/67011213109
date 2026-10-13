@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="th" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Somsak Dev - Modern Personal Portfolio</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Prompt & Kanit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#eef2ff',
+                            100: '#e0e7ff',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                            800: '#3730a3',
+                            900: '#312e81',
+                            dark: '#0b0f19',
+                            card: '#151c2c',
+                            border: '#232d42'
+                        }
+                    },
+                    fontFamily: {
+                        prompt: ['Prompt', 'sans-serif'],
+                        kanit: ['Kanit', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Custom CSS for View Animations and Glow Effects -->
+    <style>
+        body {
+            font-family: 'Prompt', sans-serif;
+            background-color: #0b0f19;
+            color: #f3f4f6;
+            overflow-x: hidden;
+        }
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Kanit', sans-serif;
+        }
+        /* Fade In Effect for Page Views */
+        .page-view {
+            display: none;
+            opacity: 0;
+            transform: translateY(12px);
+            transition: opacity 0.4s ease, transform 0.4s ease;
+        }
+        .page-view.active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+        /* Glowing Orbs Background */
+        .glow-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.15;
+        }
+        /* Glassmorphism Card Style */
+        .glass-card {
+            background: rgba(21, 28, 44, 0.75);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .glass-nav {
+            background: rgba(11, 15, 25, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0b0f19;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #2b364e;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #4f46e5;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between relative selection:bg-indigo-500 selection:text-white">
+
+    <!-- Background Glow Effects -->
+    <div class="glow-bg">
+        <div class="orb w-[500px] h-[500px] bg-indigo-600 top-[-100px] left-[-100px]"></div>
+        <div class="orb w-[600px] h-[600px] bg-purple-600 bottom-[-150px] right-[-100px]"></div>
+        <div class="orb w-[400px] h-[400px] bg-blue-600 top-[40%] left-[50%] -translate-x-1/2"></div>
+    </div>
+
+    <!-- HEADER / NAVIGATION -->
+    <header class="sticky top-0 z-50 glass-nav transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <!-- Logo -->
+                <div class="flex items-center gap-3 cursor-pointer" onclick="navigateTo('home')">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-500 to-purple-500 flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-indigo-500/30">
+                        M
+                    </div>
+                    <div>
+                        <span class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white via-gray-200 to-indigo-300 tracking-wide">KUMCHAI</span>
+                        <span class="text-xs text-indigo-400 font-semibold block tracking-widest uppercase">Dev / Portfolio</span>
+                    </div>
+                </div>
+
+                <!-- Desktop Navigation Links -->
+                <nav class="hidden md:flex space-x-1 lg:space-x-2 bg-slate-900/60 p-1.5 rounded-full border border-slate-800">
+                    <button onclick="navigateTo('home')" id="nav-home" class="nav-btn px-5 py-2 rounded-full text-sm font-medium transition-all duration-200 hover:text-white flex items-center gap-2">
+                        <i class="fa-solid fa-house-user text-xs"></i> หน้าแรก (Home)
+                    </button>
+                    <button onclick="navigateTo('education')" id="nav-education" class="nav-btn px-5 py-2 rounded-full text-sm font-medium transition-all duration-200 hover:text-white flex items-center gap-2">
+                        <i class="fa-solid fa-graduation-cap text-xs"></i> การศึกษา (Education)
+                    </button>
+                    <button onclick="navigateTo('portfolio')" id="nav-portfolio" class="nav-btn px-5 py-2 rounded-full text-sm font-medium transition-all duration-200 hover:text-white flex items-center gap-2">
+                        <i class="fa-solid fa-briefcase text-xs"></i> ผลงาน (Portfolio)
+                    </button>
+                    <button onclick="navigateTo('activity')" id="nav-activity" class="nav-btn px-5 py-2 rounded-full text-sm font-medium transition-all duration-200 hover:text-white flex items-center gap-2">
+                        <i class="fa-solid fa-award text-xs"></i> กิจกรรม (Activity)
+                    </button>
+                    <button onclick="navigateTo('contact')" id="nav-contact" class="nav-btn px-5 py-2 rounded-full text-sm font-medium transition-all duration-200 hover:text-white flex items-center gap-2">
+                        <i class="fa-solid fa-envelope text-xs"></i> ติดต่อ (Contact)
+                    </button>
+                </nav>
+
+                <!-- Quick Action Button -->
+                <div class="hidden md:block">
+                    <button onclick="navigateTo('contact')" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-medium text-sm hover:shadow-lg hover:shadow-indigo-500/25 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200">
+                        <i class="fa-solid fa-paper-plane mr-2"></i> ติดต่อเรา
+                    </button>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <div class="md:hidden flex items-center">
+                    <button id="mobile-menu-btn" class="p-2.5 rounded-xl bg-slate-800 text-gray-300 hover:text-white focus:outline-none">
+                        <i class="fa-solid fa-bars text-xl" id="menu-icon"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu Drawer -->
+        <div id="mobile-menu" class="hidden md:hidden glass-card border-b border-slate-800 px-4 pt-2 pb-6 space-y-2">
+            <button onclick="navigateTo('home'); toggleMobileMenu()" id="mob-nav-home" class="mob-nav-btn w-full text-left px-4 py-3 rounded-xl text-base font-medium flex items-center gap-3">
+                <i class="fa-solid fa-house-user w-5 text-indigo-400"></i> Home (หน้าแรก)
+            </button>
+            <button onclick="navigateTo('education'); toggleMobileMenu()" id="mob-nav-education" class="mob-nav-btn w-full text-left px-4 py-3 rounded-xl text-base font-medium flex items-center gap-3">
+                <i class="fa-solid fa-graduation-cap w-5 text-indigo-400"></i> Education (การศึกษา)
+            </button>
+            <button onclick="navigateTo('portfolio'); toggleMobileMenu()" id="mob-nav-portfolio" class="mob-nav-btn w-full text-left px-4 py-3 rounded-xl text-base font-medium flex items-center gap-3">
+                <i class="fa-solid fa-briefcase w-5 text-indigo-400"></i> Portfolio (ผลงาน)
+            </button>
+            <button onclick="navigateTo('activity'); toggleMobileMenu()" id="mob-nav-activity" class="mob-nav-btn w-full text-left px-4 py-3 rounded-xl text-base font-medium flex items-center gap-3">
+                <i class="fa-solid fa-award w-5 text-indigo-400"></i> Activity (กิจกรรม)
+            </button>
+            <button onclick="navigateTo('contact'); toggleMobileMenu()" id="mob-nav-contact" class="mob-nav-btn w-full text-left px-4 py-3 rounded-xl text-base font-medium flex items-center gap-3">
+                <i class="fa-solid fa-envelope w-5 text-indigo-400"></i> Contact (ติดต่อ)
+            </button>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT CONTAINER (SPA VIEWS) -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10">
+
+        <!-- ==================== 1. HOME VIEW ==================== -->
+        <section id="view-home" class="page-view">
+            <!-- Hero Section -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center py-6 lg:py-12">
+                <!-- Text Intro -->
+                <div class="lg:col-span-7 space-y-6 text-center lg:text-left">
+                    <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-300 text-sm font-medium">
+                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                        พร้อมรับงานพัฒนาเว็บไซต์ & ออกแบบ UI/UX
+                    </div>
+                    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-tight">
+                        สวัสดีครับผม <br>
+                        <span class="bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400">
+                            กำชัย ลีระบุตร
+                        </span>
+                    </h1>
+                    <p class="text-xl text-indigo-200/90 font-medium">
+                        Full Stack Developer & Technical UI/UX Specialist
+                    </p>
+                    <p class="text-gray-400 text-base leading-relaxed max-w-2xl mx-auto lg:mx-0">
+                        ผมนับเป็นนักพัฒนาเว็บที่มีความหลงใหลในการสร้างสรรค์ดิจิทัลโซลูชันที่ทันสมัย ทำงานครอบคลุมทั้ง Frontend และ Backend ด้วยการเขียนโค้ดที่สะอาด มุ่งเน้นประสบการณ์ใช้งานที่ราบรื่น (User Experience) รองรับผู้ใช้งานจำนวนมาก และตอบโจทย์ธุรกิจจริง
+                    </p>
+
+                    <!-- CTA Buttons -->
+                    <div class="flex flex-wrap items-center justify-center lg:justify-start gap-4 pt-4">
+                        <button onclick="navigateTo('portfolio')" class="px-7 py-3.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-base shadow-lg shadow-indigo-600/30 hover:scale-105 transition-all duration-200 flex items-center gap-2">
+                            <i class="fa-solid fa-eye"></i> ชมผลงานทั้งหมด
+                        </button>
+                        <button onclick="showToast('ดาวน์โหลดเอกสาร Resume สำเร็จ!')" class="px-7 py-3.5 rounded-xl glass-card text-gray-200 hover:text-white font-semibold text-base hover:bg-slate-800/80 border border-slate-700 transition-all duration-200 flex items-center gap-2">
+                            <i class="fa-solid fa-file-arrow-down text-indigo-400"></i> ดาวน์โหลด Resume (PDF)
+                        </button>
+                    </div>
+
+                    <!-- Social Media Links -->
+                    <div class="pt-6 flex items-center justify-center lg:justify-start gap-4">
+                        <span class="text-sm text-gray-400 font-medium">ติดตามผมได้ที่:</span>
+                        <a href="https://github.com" target="_blank" class="w-10 h-10 rounded-lg glass-card flex items-center justify-center text-gray-300 hover:text-white hover:bg-indigo-600/30 transition-all">
+                            <i class="fa-brands fa-github text-lg"></i>
+                        </a>
+                        <a href="https://www.instagram.com/ml_20042547/" target="_blank" class="w-10 h-10 rounded-lg glass-card flex items-center justify-center text-gray-300 hover:text-white hover:bg-indigo-600/30 transition-all">
+                            <i class="fa-brands fa-linkedin-in text-lg"></i>
+                        </a>
+                        <a href="https://www.facebook.com/kumchai.leeraboot" target="_blank" class="w-10 h-10 rounded-lg glass-card flex items-center justify-center text-gray-300 hover:text-white hover:bg-indigo-600/30 transition-all">
+                            <i class="fa-brands fa-facebook-f text-lg"></i>
+                        </a>
+                        <a href="https://line.me" target="_blank" class="w-10 h-10 rounded-lg glass-card flex items-center justify-center text-gray-300 hover:text-white hover:bg-indigo-600/30 transition-all">
+                            <i class="fa-brands fa-line text-lg"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Profile Photo Card -->
+                <div class="lg:col-span-5 flex justify-center">
+                    <div class="relative group max-w-sm w-full">
+                        <div class="absolute -inset-1 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-3xl blur opacity-30 group-hover:opacity-75 transition duration-500"></div>
+                        <div class="relative glass-card rounded-3xl p-4 overflow-hidden border border-slate-700">
+                            <img src="Mos.jpg">
+                            <div class="mt-4 p-3 rounded-xl bg-slate-900/80 backdrop-blur-md flex items-center justify-between">
+                                <div>
+                                    <h3 class="text-white font-semibold text-lg">กำชัย ลีระบุตร</h3>
+                                    <p class="text-xs text-indigo-400">Senior Full Stack Web Developer</p>
+                                </div>
+                                <div class="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 text-xs font-semibold border border-emerald-500/30">
+                                    ประสบการณ์ 5+ ปี
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Skills Section -->
+            <div class="mt-16 pt-8 border-t border-slate-800">
+                <div class="text-center mb-10">
+                    <h2 class="text-2xl sm:text-3xl font-bold text-white">ทักษะและความเชี่ยวชาญ (Technical Skills)</h2>
+                    <p class="text-gray-400 text-sm mt-2">เทคโนโลยีและเครื่องมือที่ใช้ในการสร้างสรรค์ผลงานคุณภาพสูง</p>
+                </div>
+
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                    <!-- Skill Badge 1 -->
+                    <div class="glass-card p-4 rounded-2xl text-center hover:border-indigo-500/50 hover:bg-slate-800/80 transition-all group">
+                        <i class="fa-brands fa-react text-4xl text-cyan-400 group-hover:scale-110 transition-transform"></i>
+                        <h4 class="text-white font-semibold mt-3 text-sm">React / Next.js</h4>
+                        <p class="text-xs text-gray-400 mt-1">Advanced</p>
+                    </div>
+                    <!-- Skill Badge 2 -->
+                    <div class="glass-card p-4 rounded-2xl text-center hover:border-indigo-500/50 hover:bg-slate-800/80 transition-all group">
+                        <i class="fa-brands fa-node-js text-4xl text-emerald-500 group-hover:scale-110 transition-transform"></i>
+                        <h4 class="text-white font-semibold mt-3 text-sm">Node.js / Express</h4>
+                        <p class="text-xs text-gray-400 mt-1">Advanced</p>
+                    </div>
+                    <!-- Skill Badge 3 -->
+                    <div class="glass-card p-4 rounded-2xl text-center hover:border-indigo-500/50 hover:bg-slate-800/80 transition-all group">
+                        <i class="fa-brands fa-js-square text-4xl text-yellow-400 group-hover:scale-110 transition-transform"></i>
+                        <h4 class="text-white font-semibold mt-3 text-sm">JavaScript / TS</h4>
+                        <p class="text-xs text-gray-400 mt-1">Expert</p>
+                    </div>
+                    <!-- Skill Badge 4 -->
+                    <div class="glass-card p-4 rounded-2xl text-center hover:border-indigo-500/50 hover:bg-slate-800/80 transition-all group">
+                        <i class="fa-solid fa-wind text-4xl text-sky-400 group-hover:scale-110 transition-transform"></i>
+                        <h4 class="text-white font-semibold mt-3 text-sm">Tailwind CSS</h4>
+                        <p class="text-xs text-gray-400 mt-1">Expert</p>
+                    </div>
+                    <!-- Skill Badge 5 -->
+                    <div class="glass-card p-4 rounded-2xl text-center hover:border-indigo-500/50 hover:bg-slate-800/80 transition-all group">
+                        <i class="fa-solid fa-database text-4xl text-indigo-400 group-hover:scale-110 transition-transform"></i>
+                        <h4 class="text-white font-semibold mt-3 text-sm">PostgreSQL / Mongo</h4>
+                        <p class="text-xs text-gray-400 mt-1">Intermediate</p>
+                    </div>
+                    <!-- Skill Badge 6 -->
+                    <div class="glass-card p-4 rounded-2xl text-center hover:border-indigo-500/50 hover:bg-slate-800/80 transition-all group">
+                        <i class="fa-brands fa-figma text-4xl text-pink-400 group-hover:scale-110 transition-transform"></i>
+                        <h4 class="text-white font-semibold mt-3 text-sm">Figma (UI/UX)</h4>
+                        <p class="text-xs text-gray-400 mt-1">Advanced</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== 2. EDUCATION VIEW ==================== -->
+        <section id="view-education" class="page-view">
+            <div class="text-center mb-12">
+                <span class="px-4 py-1.5 rounded-full bg-indigo-500/10 text-indigo-400 font-semibold text-xs border border-indigo-500/20">ACADEMIC BACKGROUND</span>
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-white mt-3">ประวัติการศึกษา (Education)</h2>
+                <p class="text-gray-400 text-base max-w-xl mx-auto mt-2">เส้นทางการเรียนรู้และภูมิหลังทางการศึกษาตั้งแต่ระดับมัธยมจนถึงอุดมศึกษา</p>
+            </div>
+
+            <!-- Education Timeline Layout -->
+            <div class="max-w-4xl mx-auto relative pl-6 sm:pl-8 border-l-2 border-indigo-500/30 space-y-12">
+
+                <!-- Education Item 1: Master's or Special Diploma -->
+                <div class="relative group">
+                    <!-- Timeline Dot -->
+                    <div class="absolute -left-[31px] sm:-left-[39px] top-1.5 w-6 h-6 rounded-full bg-indigo-600 border-4 border-slate-900 group-hover:scale-125 transition-transform"></div>
+                    
+                    <div class="glass-card p-6 sm:p-8 rounded-3xl border border-slate-700/80 hover:border-indigo-500/50 transition duration-300">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-800">
+                            <div class="flex items-center gap-4">
+                                <div class="w-12 h-12 rounded-2xl bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400 font-bold text-xl">
+                                    <i class="fa-solid fa-graduation-cap"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-bold text-white">ปริญญาตรี (IT) สื่อนฤมิต</h3>
+                                    <p class="text-indigo-400 font-medium text-sm">มหาลัยมหาสารคาม (Mahasarakham University)</p>
+                                </div>
+                            </div>
+                            <span class="px-4 py-1.5 rounded-full bg-slate-800 text-xs font-semibold text-indigo-300 self-start sm:self-auto border border-slate-700">
+                                พ.ศ. 2567 - 2570
+                            </span>
+                        </div>
+                        <div class="mt-4 space-y-2 text-sm text-gray-300">
+                            <p><strong class="text-white">กำลังศึกษา:</strong> เกี่ยวกับการสร้างสรรค์และผลิตสื่อดิจิทัล  (Creative Media Design)</p>
+                            <div class="flex flex-wrap gap-4 pt-2">
+                                <span class="text-emerald-400 font-semibold"><i class="fa-solid fa-star text-xs"></i> เกรดเฉลี่ย: 3.85 (เกียรตินิยม)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Education Item 2: Bachelor's Degree -->
+                <div class="relative group">
+                    <div class="absolute -left-[31px] sm:-left-[39px] top-1.5 w-6 h-6 rounded-full bg-indigo-600 border-4 border-slate-900 group-hover:scale-125 transition-transform"></div>
+                    
+                    <div class="glass-card p-6 sm:p-8 rounded-3xl border border-slate-700/80 hover:border-indigo-500/50 transition duration-300">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-800">
+                            <div class="flex items-center gap-4">
+                                <div class="w-12 h-12 rounded-2xl bg-indigo-500/10 border border-indigo-500/30 flex items-center justify-center text-indigo-400 font-bold text-xl">
+                                    <i class="fa-solid fa-university"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-bold text-white">มัธยมศึกษาตอนปลาย</h3>
+                                    <p class="text-indigo-400 font-medium text-sm">โรงเรียนชุมพลโพนพิสัย (Chumpholphonphisai School)</p>
+                                </div>
+                            </div>
+                            <span class="px-4 py-1.5 rounded-full bg-slate-800 text-xs font-semibold text-indigo-300 self-start sm:self-auto border border-slate-700">
+                                พ.ศ. 2563 - 2566
+                            </span>
+                        </div>
+                        <div class="mt-4 space-y-2 text-sm text-gray-300">
+                            <p><strong class="text-white">จบการศึกษา</strong> </p>
+                            <div class="flex flex-wrap gap-4 pt-2">
+                                <span class="text-emerald-400 font-semibold"><i class="fa-solid fa-award text-xs"></i> เกรดเฉลี่ย: 3.65 </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Education Item 3: High School -->
+                <div class="relative group">
+                    <div class="absolute -left-[31px] sm:-left-[39px] top-1.5 w-6 h-6 rounded-full bg-indigo-600 border-4 border-slate-900 group-hover:scale-125 transition-transform"></div>
+                    
+                    <div class="glass-card p-6 sm:p-8 rounded-3xl border border-slate-700/80 hover:border-indigo-500/50 transition duration-300">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-800">
+                            <div class="flex items-center gap-4">
+                                <div class="w-12 h-12 rounded-2xl bg-sky-500/10 border border-sky-500/30 flex items-center justify-center text-sky-400 font-bold text-xl">
+                                    <i class="fa-solid fa-school"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-bold text-white">มัธยมศึกษาตอนต้น</h3>
+                                    <p class="text-indigo-400 font-medium text-sm">โรงเรียนชุมพลโพนพิสัย (Chumpholphonphisai School)</p>
+                                </div>
+                            </div>
+                            <span class="px-4 py-1.5 rounded-full bg-slate-800 text-xs font-semibold text-indigo-300 self-start sm:self-auto border border-slate-700">
+                                พ.ศ. 2560 - 2563
+                            </span>
+                        </div>
+                        <div class="mt-4 space-y-2 text-sm text-gray-300">
+                            <p>จบการศึกษา</p>
+                            <div class="flex flex-wrap gap-4 pt-2">
+                                <span class="text-emerald-400 font-semibold"><i class="fa-solid fa-check text-xs"></i> เกรดเฉลี่ยสะสม: 3.90</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ==================== 3. PORTFOLIO VIEW ==================== -->
+        <section id="view-portfolio" class="page-view">
+            <div class="text-center mb-10">
+                <span class="px-4 py-1.5 rounded-full bg-indigo-500/10 text-indigo-400 font-semibold text-xs border border-indigo-500/20">PORTFOLIO SHOWCASE</span>
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-white mt-3">ผลงานโดดเด่นของเรา (Projects)</h2>
+                <p class="text-gray-400 text-base max-w-xl mx-auto mt-2">รวบรวมผลงานการพัฒนาเว็บ แอปพลิเคชัน และงาน ออกแบบ UX/UI คุณภาพสูง</p>
+            </div>
+
+            <!-- Category Filter Controls -->
+            <div class="flex flex-wrap items-center justify-center gap-2 mb-10">
+                <button onclick="filterPortfolio('all')" class="port-filter-btn px-5 py-2 rounded-full text-sm font-medium transition-all bg-indigo-600 text-white shadow-lg shadow-indigo-600/30" data-filter="all">ทั้งหมด (All)</button>
+                <button onclick="filterPortfolio('web')" class="port-filter-btn px-5 py-2 rounded-full text-sm font-medium transition-all glass-card text-gray-300 hover:text-white" data-filter="web">Web Application</button>
+                <button onclick="filterPortfolio('mobile')" class="port-filter-btn px-5 py-2 rounded-full text-sm font-medium transition-all glass-card text-gray-300 hover:text-white" data-filter="mobile">Mobile App</button>
+                <button onclick="filterPortfolio('design')" class="port-filter-btn px-5 py-2 rounded-full text-sm font-medium transition-all glass-card text-gray-300 hover:text-white" data-filter="design">UI/UX Design</button>
+            </div>
+
+            <!-- Portfolio Cards Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="portfolio-container">
+
+                <!-- Project Item 1 -->
+                <div class="portfolio-item glass-card rounded-3xl overflow-hidden border border-slate-800 hover:border-indigo-500/50 transition-all duration-300 group flex flex-col justify-between" data-category="web">
+                    <div>
+                        <div class="relative overflow-hidden h-52">
+                            <img src="ww.jpeg" alt="E-Commerce Dashboard" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+                            <span class="absolute top-4 left-4 bg-indigo-600/90 backdrop-blur-md text-white text-xs font-semibold px-3 py-1 rounded-full">Web System</span>
+                        </div>
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold text-white group-hover:text-indigo-400 transition-colors">รางวัลรองชนะเลิศอันดับ 1</h3>
+                            <p class="text-gray-400 text-sm mt-2 leading-relaxed">รางวัลรองชนะเลิศอันดับ 1 การประกวดผลิตหนังสั้น หรือวิดีโอสั้น ประเภทที่ 2: Vertical Microfilm - Tiktok Comtemt</p>
+                            
+                            <!-- Tech Stack Tags -->
+                            <div class="flex flex-wrap gap-2 mt-4">
+                                <span class="px-2.5 py-1 bg-slate-800 rounded-lg text-xs text-indigo-300 font-medium">React</span>
+                                <span class="px-2.5 py-1 bg-slate-800 rounded-lg text-xs text-indigo-300 font-medium">Node.js</span>
+                                <span class="px-2.5 py-1 bg-slate-800 rounded-lg text-xs text-indigo-300 font-medium">Tailwind</span>
+                                <span class="px-2.5 py-1 bg-slate-800 rounded-lg text-xs text-indigo-300 font-medium">PostgreSQL</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="px-6 pb-6 pt-2 flex items-center justify-between border-t border-slate-800/80">
+                        <button onclick="openModal('Enterprise E-Commerce', 'ระบบบริหารร้านค้าและสต็อกครบวงจรพัฒนาด้วย React & Node.js', 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=1200')" class="text-indigo-400 text-sm font-semibold hover:text-indigo-300 flex items-center gap-1">
+                            รายละเอียด <i class="fa-solid fa-arrow-right text-xs"></i>
+                        </button>
+                        <a href="#" class="w-9 h-9 rounded-xl bg-slate-800 flex items-center justify-center text-gray-300 hover:text-white hover:bg-indigo-600 transition">
+                            <i class="fa-solid fa-up-right-from-square text-xs"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Project Item 2 -->
+                <div class="portfolio-item glass-card rounded-3xl overflow-hidden border border-slate-800 hover:border-indigo-500/50 transition-all duration-300 group flex flex-col justify-between" data-category="mobile">
+                    <div>
+                        <div class="relative overflow-hidden h-52">
+                            <img src="Screenshot 2026-03-20 192635.png" alt="Health Tracking App" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+                            <span class="absolute top-4 left-4 bg-purple-600/90 backdrop-blur-md text-white text-xs font-semibold px-3 py-1 rounded-full">Mobile App</span>
+                        </div>
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold text-white group-hover:text-indigo-400 transition-colors">Motion Graphic</h3>
+                            <p class="text-gray-400 text-sm mt-2 leading-relaxed">ผลงาน Motion Graphic</p>
+                            
+                            <div class="flex flex-wrap gap-2 mt-4">
+                                <span class="px-2.5 py-1 bg-slate-800 rounded-lg text-xs text-indigo-300 font-medium">React Native</span>
+                                <span class="px-2.5 py-1 bg-slate-800 rounded-lg text-xs text-indigo-300 font-medium">Firebase</span>
+                                <span class="px-2.5 py-1 bg-slate-800 rounded-lg text-xs text-indigo-300 font-medium">GraphQL</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="px-6 pb-6 pt-2 flex items-center justify-between border-t border-slate-800/80">
+                        <button onclick="openModal('FitPulse Health Tracker', 'แอปพลิเคชันสำหรับคนรักสุขภาพ ติดตามก้าวเดิน คำนวณสารอาหาร และเชื่อมต่อ Smartwatch', 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&q=80&w=1200')" class="text-indigo-400 text-sm font-semibold hover:text-indigo-300 flex items-center gap-1">
+                            รายละเอียด <i class="fa-solid fa-arrow-right text-xs"></i>
+                        </button>
+                        <a href="#" class="w-9 h-9 rounded-xl bg-slate-800 flex items-center justify-center text-gray-300 hover:text-white hover:bg-indigo-600 transition">
+                            <i class="fa-solid fa-up-right-from-square text-xs"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Project Item 3 -->
+                <div class="portfolio-item glass-card rounded-3xl overflow-hidden border border-slate-800 hover:border-indigo-500/50 transition-all duration-300 group flex flex-col justify-between" data-category="design">
+                    <div>
+                        <div class="relative overflow-hidden h-52">
+                            <img src="web.png" alt="FinTech App UI" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+                            <span class="absolute top-4 left-4 bg-pink-600/90 backdrop-blur-md text-white text-xs font-semibold px-3 py-1 rounded-full">UI/UX Design</span>
+                        </div>
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold text-white group-hover:text-indigo-400 transition-colors">Web Site</h3>
+                            <p class="text-gray-400 text-sm mt-2 leading-relaxed">การออกแบบ Web Site ของผม</p>
+                            
+                            <div class="flex flex-wrap gap-2 mt-4">
+                                <span class="px-2.5 py-1 bg-slate-800 rounded-lg text-xs text-indigo-300 font-medium">Figma</span>
+                                <span class="px-2.5 py-1 bg-slate-800 rounded-lg text-xs text-indigo-300 font-medium">UI System</span>
+                                <span class="px-2.5 py-1 bg-slate-800 rounded-lg text-xs text-indigo-300 font-medium">Prototyping</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="px-6 pb-6 pt-2 flex items-center justify-between border-t border-slate-800/80">
+                        <button onclick="openModal('FinTech Banking UI', 'การออกแบบ Mobile Banking แอปพลิเคชันด้วย Figma สร้าง Design System ครบชุด', 'https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&q=80&w=1200')" class="text-indigo-400 text-sm font-semibold hover:text-indigo-300 flex items-center gap-1">
+                            รายละเอียด <i class="fa-solid fa-arrow-right text-xs"></i>
+                        </button>
+                        <a href="#" class="w-9 h-9 rounded-xl bg-slate-800 flex items-center justify-center text-gray-300 hover:text-white hover:bg-indigo-600 transition">
+                            <i class="fa-solid fa-up-right-from-square text-xs"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Project Item 4 -->
+                <div class="portfolio-item glass-card rounded-3xl overflow-hidden border border-slate-800 hover:border-indigo-500/50 transition-all duration-300 group flex flex-col justify-between" data-category="web">
+                    <div>
+                        <div class="relative overflow-hidden h-52">
+                            <img src="Roblox.png" alt="SaaS Analytics Platform" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+                            <span class="absolute top-4 left-4 bg-indigo-600/90 backdrop-blur-md text-white text-xs font-semibold px-3 py-1 rounded-full">Web System</span>
+                        </div>
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold text-white group-hover:text-indigo-400 transition-colors">SaaS Analytics Platform</h3>
+                            <p class="text-gray-400 text-sm mt-2 leading-relaxed">การพัฒนาเกม Roblox โดยใช้ Studio Roblox</p>
+                            
+                            <div class="flex flex-wrap gap-2 mt-4">
+                                <span class="px-2.5 py-1 bg-slate-800 rounded-lg text-xs text-indigo-300 font-medium">Vue.js</span>
+                                <span class="px-2.5 py-1 bg-slate-800 rounded-lg text-xs text-indigo-300 font-medium">Chart.js</span>
+                                <span class="px-2.5 py-1 bg-slate-800 rounded-lg text-xs text-indigo-300 font-medium">Python FastAPI</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="px-6 pb-6 pt-2 flex items-center justify-between border-t border-slate-800/80">
+                        <button onclick="openModal('SaaS Analytics', 'ระบบวิเคราะห์ข้อมูลเรียลไทม์ เชื่อมต่อกับฐานข้อมูล Big Data ประมวลผลรวดเร็ว', 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=1200')" class="text-indigo-400 text-sm font-semibold hover:text-indigo-300 flex items-center gap-1">
+                            รายละเอียด <i class="fa-solid fa-arrow-right text-xs"></i>
+                        </button>
+                        <a href="#" class="w-9 h-9 rounded-xl bg-slate-800 flex items-center justify-center text-gray-300 hover:text-white hover:bg-indigo-600 transition">
+                            <i class="fa-solid fa-up-right-from-square text-xs"></i>
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ==================== 4. ACTIVITY VIEW ==================== -->
+        <section id="view-activity" class="page-view">
+            <div class="text-center mb-10">
+                <span class="px-4 py-1.5 rounded-full bg-indigo-500/10 text-indigo-400 font-semibold text-xs border border-indigo-500/20">ACTIVITIES & CERTIFICATES</span>
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-white mt-3">กิจกรรมและประกาศนียบัตร (Activities)</h2>
+                <p class="text-gray-400 text-base max-w-xl mx-auto mt-2">ประวัติการเข้าร่วมอบรม งานสัมมนา การแข่งขัน และกิจกรรมเพื่อสังคม</p>
+            </div>
+
+            <!-- Activity Cards Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+                <!-- Activity Card 1 -->
+                <div class="glass-card p-6 rounded-3xl border border-slate-800 hover:border-indigo-500/50 transition-all duration-300 flex flex-col sm:flex-row gap-6 items-center">
+                    <img src="ww.jpeg" alt="Hackathon" class="w-full sm:w-48 h-40 object-cover rounded-2xl flex-shrink-0">
+                    <div class="space-y-2">
+                        <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                            <i class="fa-solid fa-trophy mr-1"></i> รางวัลชนะเลิศ
+                        </span>
+                        <h3 class="text-xl font-bold text-white">รางวัลรองชนะเลิศอันดับ 1 Vertical Microfilm - Tiktok</h3>
+                        <p class="text-xs text-indigo-400"><i class="fa-regular fa-calendar mr-1"></i> 15 - 17 พฤศจิกายน 2568</p>
+                        <p class="text-gray-400 text-sm">รางวัลรองชนะเลิศอันดับ 1 การประกวดผลิตหนังสั้น หรือวิดีโอสั้น ประเภทที่ 2: Vertical Microfilm - Tiktok Comtemt</p>
+                    </div>
+                </div>
+
+               
+
+               
+
+                
+                
+
+            </div>
+        </section>
+
+        <!-- ==================== 5. CONTACT VIEW ==================== -->
+        <section id="view-contact" class="page-view">
+            <div class="text-center mb-10">
+                <span class="px-4 py-1.5 rounded-full bg-indigo-500/10 text-indigo-400 font-semibold text-xs border border-indigo-500/20">GET IN TOUCH</span>
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-white mt-3">ช่องทางการติดต่อ (Contact Us)</h2>
+                <p class="text-gray-400 text-base max-w-xl mx-auto mt-2">หากคุณสนใจร่วมงาน พูดคุยโปรเจกต์ หรือสอบถามข้อมูลเพิ่มเติม สามารถติดต่อผมได้ทันที</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <!-- Contact Details List -->
+                <div class="lg:col-span-5 space-y-6">
+                    <div class="glass-card p-6 sm:p-8 rounded-3xl border border-slate-800 space-y-6">
+                        <h3 class="text-xl font-bold text-white border-b border-slate-800 pb-4">ข้อมูลติดต่อตรง</h3>
+                        
+                        <!-- Email -->
+                        <div class="flex items-start gap-4">
+                            <div class="w-12 h-12 rounded-2xl bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400 flex-shrink-0">
+                                <i class="fa-solid fa-envelope text-xl"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-400 font-medium">อีเมล (Email)</p>
+                                <a href="mailto:67011213109@msu.ac.th" class="text-white font-semibold hover:text-indigo-400 transition">somsak.dev@example.com</a>
+                            </div>
+                        </div>
+
+                        <!-- Phone -->
+                        <div class="flex items-start gap-4">
+                            <div class="w-12 h-12 rounded-2xl bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400 flex-shrink-0">
+                                <i class="fa-solid fa-phone text-xl"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-400 font-medium">เบอร์โทรศัพท์ (Phone)</p>
+                                <a href="tel:0812345678" class="text-white font-semibold hover:text-indigo-400 transition">+66 (0) 88-696-8566</a>
+                            </div>
+                        </div>
+
+                        <!-- Address -->
+                        <div class="flex items-start gap-4">
+                            <div class="w-12 h-12 rounded-2xl bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400 flex-shrink-0">
+                                <i class="fa-solid fa-location-dot text-xl"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-400 font-medium">ที่อยู่ (Location)</p>
+                                <p class="text-white font-semibold">มหาสารคาม, ประเทศไทย (พร้อมทำงานแบบ Remote / On-site)</p>
+                            </div>
+                        </div>
+
+                        <!-- Line ID -->
+                        <div class="flex items-start gap-4">
+                            <div class="w-12 h-12 rounded-2xl bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400 flex-shrink-0">
+                                <i class="fa-brands fa-line text-xl"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-400 font-medium">LINE ID</p>
+                                <p class="text-white font-semibold">@mossy_2547</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Interactive Contact Form -->
+                <div class="lg:col-span-7">
+                    <div class="glass-card p-6 sm:p-8 rounded-3xl border border-slate-800">
+                        <h3 class="text-xl font-bold text-white mb-6">ส่งข้อความหาเรา (Send a Message)</h3>
+                        <form id="contact-form" onsubmit="handleFormSubmit(event)" class="space-y-5">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                                <div>
+                                    <label class="block text-xs font-semibold text-gray-300 mb-2">ชื่อ - นามสกุล *</label>
+                                    <input type="text" required placeholder="สมชาย ใจดี" class="w-full px-4 py-3 rounded-xl bg-slate-900/90 border border-slate-700 text-white placeholder-gray-500 focus:outline-none focus:border-indigo-500 transition">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-gray-300 mb-2">อีเมลติดต่อ *</label>
+                                    <input type="email" required placeholder="yourname@domain.com" class="w-full px-4 py-3 rounded-xl bg-slate-900/90 border border-slate-700 text-white placeholder-gray-500 focus:outline-none focus:border-indigo-500 transition">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-300 mb-2">หัวข้อเรื่อง *</label>
+                                <input type="text" required placeholder="สนใจว่าจ้างพัฒนาเว็บไซต์ / ปรึกษาโปรเจกต์" class="w-full px-4 py-3 rounded-xl bg-slate-900/90 border border-slate-700 text-white placeholder-gray-500 focus:outline-none focus:border-indigo-500 transition">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-300 mb-2">รายละเอียดข้อความ *</label>
+                                <textarea rows="4" required placeholder="พิมพ์รายละเอียดของงานหรือข้อความที่คุณต้องการติดต่อ..." class="w-full px-4 py-3 rounded-xl bg-slate-900/90 border border-slate-700 text-white placeholder-gray-500 focus:outline-none focus:border-indigo-500 transition resize-none"></textarea>
+                            </div>
+                            <button type="submit" class="w-full py-4 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold text-base hover:shadow-lg hover:shadow-indigo-500/30 hover:scale-[1.01] active:scale-[0.99] transition-all flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-paper-plane"></i> ส่งข้อความทันที
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ==================== GLOBAL FOOTER (SAME ACROSS ALL PAGES) ==================== -->
+    <footer class="mt-20 border-t border-slate-800/80 glass-nav relative z-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <!-- Col 1: Brand -->
+                <div class="md:col-span-2 space-y-4">
+                    <div class="flex items-center gap-3 cursor-pointer" onclick="navigateTo('home')">
+                        <div class="w-9 h-9 rounded-xl bg-indigo-600 flex items-center justify-center text-white font-bold">M</div>
+                        <span class="text-xl font-bold text-white tracking-wide">MOSSY DEV</span>
+                    </div>
+                    <p class="text-gray-400 text-sm max-w-sm leading-relaxed">
+                        มุ่งมั่นพัฒนาดิจิทัลโซลูชัน ยกระดับประสบการณ์ใช้งาน และสร้างสรรค์เว็บซอฟต์แวร์มาตรฐานสากล
+                    </p>
+                    <p class="text-xs text-gray-500">
+                        &copy; 2026 MOSSY DEV. All rights reserved. Designed with Tailwind CSS.
+                    </p>
+                </div>
+
+                <!-- Col 2: Quick Links -->
+                <div class="space-y-3">
+                    <h4 class="text-white font-semibold text-sm tracking-wider uppercase">เมนูด่วน (Quick Links)</h4>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li><button onclick="navigateTo('home')" class="hover:text-indigo-400 transition">หน้าแรก (Home)</button></li>
+                        <li><button onclick="navigateTo('education')" class="hover:text-indigo-400 transition">การศึกษา (Education)</button></li>
+                        <li><button onclick="navigateTo('portfolio')" class="hover:text-indigo-400 transition">ผลงาน (Portfolio)</button></li>
+                        <li><button onclick="navigateTo('activity')" class="hover:text-indigo-400 transition">กิจกรรม (Activity)</button></li>
+                        <li><button onclick="navigateTo('contact')" class="hover:text-indigo-400 transition">ติดต่อเรา (Contact)</button></li>
+                    </ul>
+                </div>
+
+                <!-- Col 3: Contact Summary -->
+                <div class="space-y-3">
+                    <h4 class="text-white font-semibold text-sm tracking-wider uppercase">การติดต่อ (Contact)</h4>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li><i class="fa-solid fa-envelope text-indigo-400 mr-2"></i> 67011213109@msu.ac.th</li>
+                        <li><i class="fa-solid fa-phone text-indigo-400 mr-2"></i> 088-696-8566</li>
+                        <li><i class="fa-solid fa-location-dot text-indigo-400 mr-2"></i> มหาสามคาม, ประเทศไทย</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Portfolio Detail Modal -->
+    <div id="portfolio-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/80 backdrop-blur-md transition-opacity">
+        <div class="glass-card max-w-2xl w-full rounded-3xl border border-slate-700 p-6 sm:p-8 relative space-y-4">
+            <button onclick="closeModal()" class="absolute top-4 right-4 w-10 h-10 rounded-full bg-slate-800 text-gray-400 hover:text-white flex items-center justify-center">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+            <img id="modal-img" src="" alt="Project Preview" class="w-full h-64 object-cover rounded-2xl">
+            <h3 id="modal-title" class="text-2xl font-bold text-white"></h3>
+            <p id="modal-desc" class="text-gray-300 text-sm leading-relaxed"></p>
+            <div class="pt-4 flex justify-end">
+                <button onclick="closeModal()" class="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-sm font-semibold">ปิดหน้าต่าง</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="fixed bottom-6 right-6 z-50 hidden glass-card px-6 py-4 rounded-2xl border border-emerald-500/50 text-white flex items-center gap-3 shadow-xl">
+        <i class="fa-solid fa-circle-check text-emerald-400 text-xl"></i>
+        <span id="toast-msg" class="text-sm font-medium"></span>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // Pages List
+        const pages = ['home', 'education', 'portfolio', 'activity', 'contact'];
+
+        // Navigate between pages (SPA Routing Logic)
+        function navigateTo(pageId) {
+            if (!pages.includes(pageId)) return;
+
+            // Hide all pages & Reset state
+            pages.forEach(p => {
+                const view = document.getElementById(`view-${p}`);
+                const navBtn = document.getElementById(`nav-${p}`);
+                const mobNavBtn = document.getElementById(`mob-nav-${p}`);
+
+                if (view) {
+                    view.classList.remove('active');
+                }
+
+                // Desktop Nav Styling
+                if (navBtn) {
+                    navBtn.className = 'nav-btn px-5 py-2 rounded-full text-sm font-medium transition-all duration-200 text-gray-300 hover:text-white flex items-center gap-2';
+                }
+                // Mobile Nav Styling
+                if (mobNavBtn) {
+                    mobNavBtn.className = 'mob-nav-btn w-full text-left px-4 py-3 rounded-xl text-base font-medium flex items-center gap-3 text-gray-300 hover:bg-slate-800';
+                }
+            });
+
+            // Activate Target Page
+            const targetView = document.getElementById(`view-${pageId}`);
+            const targetNav = document.getElementById(`nav-${pageId}`);
+            const targetMobNav = document.getElementById(`mob-nav-${pageId}`);
+
+            if (targetView) {
+                targetView.classList.add('active');
+            }
+
+            if (targetNav) {
+                targetNav.className = 'nav-btn px-5 py-2 rounded-full text-sm font-medium transition-all duration-200 bg-indigo-600 text-white shadow-md shadow-indigo-600/30 flex items-center gap-2';
+            }
+
+            if (targetMobNav) {
+                targetMobNav.className = 'mob-nav-btn w-full text-left px-4 py-3 rounded-xl text-base font-medium flex items-center gap-3 bg-indigo-600/20 text-indigo-300 border border-indigo-500/30';
+            }
+
+            // Scroll Smooth to Top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Toggle Mobile Navigation Drawer
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        }
+
+        document.getElementById('mobile-menu-btn').addEventListener('click', toggleMobileMenu);
+
+        // Portfolio Filtering System
+        function filterPortfolio(category) {
+            const items = document.querySelectorAll('.portfolio-item');
+            const buttons = document.querySelectorAll('.port-filter-btn');
+
+            // Update Filter Buttons Style
+            buttons.forEach(btn => {
+                if (btn.getAttribute('data-filter') === category) {
+                    btn.className = 'port-filter-btn px-5 py-2 rounded-full text-sm font-medium transition-all bg-indigo-600 text-white shadow-lg shadow-indigo-600/30';
+                } else {
+                    btn.className = 'port-filter-btn px-5 py-2 rounded-full text-sm font-medium transition-all glass-card text-gray-300 hover:text-white';
+                }
+            });
+
+            // Filter Cards Logic
+            items.forEach(item => {
+                const itemCat = item.getAttribute('data-category');
+                if (category === 'all' || itemCat === category) {
+                    item.style.display = 'flex';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+
+        // Modal Box Controls
+        function openModal(title, desc, imgSrc) {
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-desc').innerText = desc;
+            document.getElementById('modal-img').src = imgSrc;
+            document.getElementById('portfolio-modal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('portfolio-modal').classList.add('hidden');
+        }
+
+        // Contact Form Handler & Toast Display
+        function handleFormSubmit(e) {
+            e.preventDefault();
+            showToast('ส่งข้อความสำเร็จแล้ว! สมศักดิ์จะติดต่อกลับโดยเร็วที่สุด');
+            document.getElementById('contact-form').reset();
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-msg').innerText = message;
+            toast.classList.remove('hidden');
+            setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 3500);
+        }
+
+        // Initialize Default Page on Load
+        window.addEventListener('DOMContentLoaded', () => {
+            navigateTo('home');
+        });
+    </script>
+</body>
+</html>
